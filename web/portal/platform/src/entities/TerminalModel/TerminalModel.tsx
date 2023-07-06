@@ -1,5 +1,7 @@
 import { EntityValue } from '@irontec/ivoz-ui';
-import defaultEntityBehavior from '@irontec/ivoz-ui/entities/DefaultEntityBehavior';
+import defaultEntityBehavior, {
+  unmarshaller as defaultUnmarshaller,
+} from '@irontec/ivoz-ui/entities/DefaultEntityBehavior';
 import EntityInterface from '@irontec/ivoz-ui/entities/EntityInterface';
 import _ from '@irontec/ivoz-ui/services/translations/translate';
 import CallIcon from '@mui/icons-material/Call';
@@ -38,6 +40,21 @@ const properties: TerminalModelProperties = {
   },
 };
 
+type UnmarshallerType = typeof defaultUnmarshaller;
+const unmarshaller: UnmarshallerType = (row, properties) => {
+  const { specificTemplate, genericTemplate } = row;
+
+  if (!specificTemplate) {
+    row.specificTemplate = '\n\n\n';
+  }
+
+  if (!genericTemplate) {
+    row.genericTemplate = '\n\n\n';
+  }
+
+  return defaultUnmarshaller(row, properties);
+};
+
 const TerminalModel: EntityInterface = {
   ...defaultEntityBehavior,
   icon: CallIcon,
@@ -63,6 +80,7 @@ const TerminalModel: EntityInterface = {
 
     return module.default;
   },
+  unmarshaller,
 };
 
 export default TerminalModel;
